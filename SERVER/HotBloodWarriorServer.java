@@ -3,7 +3,6 @@ import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.sound.sampled.*;
 
 public class HotBloodWarriorServer {
@@ -123,7 +122,9 @@ public class HotBloodWarriorServer {
 
                         int value = map.checkCell(x, y);
 
-                        if (adrenalineState[currentPlayerTurn]) {
+                        boolean usedSkill = adrenalineState[currentPlayerTurn];
+
+                        if (usedSkill) {
                             value *= 2; // 값을 2배로 조정
                             adrenalineState[currentPlayerTurn] = false; // 아드레날린 상태 해제
                         }
@@ -136,7 +137,7 @@ public class HotBloodWarriorServer {
 
                         send("value," + x + "," + y + "," + value);
                         sendToAll("HP " + hp[0] + " " + hp[1]);
-                        clients.get(opponentId).send("opponentValue," + x + "," + y + "," + value + (adrenalineState[currentPlayerTurn] ? ",skill" : ""));
+                        clients.get(opponentId).send("opponentValue," + x + "," + y + "," + value + (usedSkill ? ",skill" : ""));
                         
                         // GUI 업데이트
                         gui.updateHp();
