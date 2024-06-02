@@ -3,12 +3,11 @@ import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.sound.sampled.*;
 
 class HotBloodWarriorClient {
     static int inPort = 9999;
-    static String address = "172.20.10.2"; // 서버 주소
+    static String address = "localhost"; // 서버 주소
     static public PrintWriter out;
     static public BufferedReader in;
     static String userName = "Ikjae";
@@ -131,6 +130,8 @@ class HotBloodWarriorClient {
             });
         } else if (message.startsWith("opponentValue,")) {
             String[] arr = message.split(",");
+            int x = Integer.parseInt(arr[1]);
+            int y = Integer.parseInt(arr[2]);
             int value = Integer.parseInt(arr[3]);
             opponentUsedSkill = arr.length > 4 && arr[4].equals("skill");
             SwingUtilities.invokeLater(() -> {
@@ -201,8 +202,8 @@ class HotBloodWarriorClient {
 
             // 상단에 HP 바 패널
             JPanel hpPanel = new JPanel(new GridLayout(2, 2));
-            JLabel playerHpTextLabel = new JLabel("Your HP", SwingConstants.CENTER);
-            JLabel opponentHpTextLabel = new JLabel("Opponent's HP", SwingConstants.CENTER);
+            JLabel playerHpTextLabel = new JLabel("남은 체력", SwingConstants.CENTER);
+            JLabel opponentHpTextLabel = new JLabel("상대 체력", SwingConstants.CENTER);
 
             // 플레이어 HP 바와 라벨을 포함하는 패널
             JPanel playerHpPanel = new JPanel(new BorderLayout());
