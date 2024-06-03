@@ -3,6 +3,7 @@ import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import javax.sound.sampled.*;
 
 class HotBloodWarriorClient {
@@ -465,7 +466,7 @@ class HotBloodWarriorClient {
         }
 
         public void updateSkill(String user, String skillName) {
-            chatArea.append("[Skill] " + user + " used " + skillName + "!\n");
+            chatArea.append("[Skill] " + user + "가 " + skillName + "스킬을 사용했다!\n");
 
             // 스킬 메시지 추가 후 스크롤 위치를 최하단으로 이동
             SwingUtilities.invokeLater(() -> {

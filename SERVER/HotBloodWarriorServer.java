@@ -3,6 +3,7 @@ import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import javax.sound.sampled.*;
 
 public class HotBloodWarriorServer {
@@ -18,6 +19,8 @@ public class HotBloodWarriorServer {
 
     private ServerGUI gui;
     public static String filePath; // 파일 경로 변수 추가
+
+    private ServerSocket server; // 서버 소켓을 인스턴스 변수로 변경
 
     public static void main(String[] args) throws Exception {
         // 운영 체제 감지 및 filePath 설정
@@ -37,7 +40,7 @@ public class HotBloodWarriorServer {
 
     public void createServer() throws Exception {
         System.out.println("전사 출격 대기 중 ...");
-        ServerSocket server = new ServerSocket(inPort);
+        server = new ServerSocket(inPort);
 
         numPlayer = 0;
         while (numPlayer < maxPlayer) {
@@ -66,6 +69,21 @@ public class HotBloodWarriorServer {
     public void sendToAll(String msg) {
         for (Client c : clients) {
             c.send(msg);
+        }
+    }
+
+    public void closeServer() {
+        try {
+            for (Client c : clients) {
+                c.socket.close();
+            }
+            server.close();
+            SwingUtilities.invokeLater(() -> {
+                gui.frame.dispose();
+            });
+            System.exit(0);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -104,7 +122,16 @@ public class HotBloodWarriorServer {
             try {
                 while (true) {
                     msg = in.readLine();
-                    
+
+                    if (msg.equals("종료")) {
+                        numPlayer--;
+                        clients.remove(this);
+                        if (numPlayer == 0) {
+                            closeServer();
+                        }
+                        break;
+                    }
+
                     // 채팅 메시지 처리
                     if (msg.startsWith("chat:")) {
                         String chatMsg = msg.substring(5);
@@ -138,7 +165,7 @@ public class HotBloodWarriorServer {
                         send("value," + x + "," + y + "," + value);
                         sendToAll("HP " + hp[0] + " " + hp[1]);
                         clients.get(opponentId).send("opponentValue," + x + "," + y + "," + value + (usedSkill ? ",skill" : ""));
-                        
+
                         // GUI 업데이트
                         gui.updateHp();
                         playSoundForValue(value); // 효과음 재생
